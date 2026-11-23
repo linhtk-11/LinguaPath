@@ -1,0 +1,170 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Learner account profile and active course selection.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the profile owner.",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name from Google Auth.",
+          "maxLength": 120
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Optional avatar URL from Google Auth.",
+          "maxLength": 500
+        },
+        "activeCourseId": {
+          "type": "string",
+          "description": "Currently selected course ID.",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ownerId", "displayName", "activeCourseId", "createdAt", "updatedAt"]
+    },
+    "CourseProgress": {
+      "title": "CourseProgress",
+      "description": "Per-course study plan duration, completed days, exercise answers, vocabulary mastery, starred cards, and test scores.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "courseId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "selectedDays": {
+          "type": "integer",
+          "description": "Target days to finish the course (1..180)."
+        },
+        "completedDays": {
+          "type": "array",
+          "description": "List of completed day numbers."
+        },
+        "exerciseState": {
+          "type": "object",
+          "description": "Saved answers and grading state per exercise block."
+        },
+        "vocabMastery": {
+          "type": "object",
+          "description": "Mastery status per vocab ID (new, learning, mastered)."
+        },
+        "starredVocabIds": {
+          "type": "array",
+          "description": "List of starred vocab IDs."
+        },
+        "dayQuizResults": {
+          "type": "object",
+          "description": "Post-session vocabulary test scores per day."
+        },
+        "matchBestTimeMs": {
+          "type": "object",
+          "description": "Personal best time in ms for Match mode per scope."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "ownerId",
+        "courseId",
+        "selectedDays",
+        "completedDays",
+        "exerciseState",
+        "vocabMastery",
+        "starredVocabIds",
+        "dayQuizResults",
+        "matchBestTimeMs",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ImportedCourse": {
+      "title": "ImportedCourse",
+      "description": "Custom English study course generated from a user-uploaded document.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "subtitle": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "level": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "sourceFileName": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "defaultDays": {
+          "type": "integer"
+        },
+        "units": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ownerId", "id", "title", "subtitle", "level", "defaultDays", "units", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Authenticated learner profile and active course ID."
+    },
+    "/users/{userId}/courseProgress/{courseId}": {
+      "schema": { "$ref": "#/entities/CourseProgress" },
+      "description": "Learner progress and quiz/exercise state scoped by courseId."
+    },
+    "/users/{userId}/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/ImportedCourse" },
+      "description": "Courses imported by the learner from uploaded documents."
+    }
+  }
+}

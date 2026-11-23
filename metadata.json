@@ -1,0 +1,6 @@
+{
+  "name": "LexiPlan — Adaptive English Study Studio",
+  "description": "Import any English textbook or document to generate a personalized day-by-day study plan with complete lessons, interactive exercises, Quizlet-style vocabulary modes, and post-session mastery tests.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
