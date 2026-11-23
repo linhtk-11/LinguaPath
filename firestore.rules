@@ -89,7 +89,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if isValidId(userId)
         && isOwner(userId)
-        && existing().ownerId == request.auth.uid;
+        && (resource == null || existing().ownerId == request.auth.uid);
       allow list: if false;
       allow create: if isValidId(userId)
         && isOwner(userId)
@@ -111,7 +111,7 @@ service cloud.firestore {
         allow get: if isValidId(userId)
           && isValidId(courseId)
           && isOwner(userId)
-          && existing().ownerId == request.auth.uid;
+          && (resource == null || existing().ownerId == request.auth.uid);
         allow list: if isValidId(userId)
           && isOwner(userId)
           && existing().ownerId == request.auth.uid;
@@ -146,7 +146,7 @@ service cloud.firestore {
         allow get: if isValidId(userId)
           && isValidId(courseId)
           && isOwner(userId)
-          && existing().ownerId == request.auth.uid;
+          && (resource == null || existing().ownerId == request.auth.uid);
         allow list: if isValidId(userId)
           && isOwner(userId)
           && existing().ownerId == request.auth.uid;

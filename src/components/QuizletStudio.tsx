@@ -12,6 +12,8 @@ import {
   Trophy,
   Lightbulb,
   BookOpen,
+  Layers,
+  ClipboardCheck,
 } from 'lucide-react';
 import { VocabEntry, VocabMasteryStatus } from '../types/curriculum';
 import { speakEnglish } from '../utils/speech';
@@ -79,38 +81,61 @@ export const QuizletStudio: React.FC<QuizletStudioProps> = ({
     <div className="space-y-5">
       {/* Main Quizlet Mode Switch: Học theo thẻ vs Kiểm tra */}
       <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">{scopeTitle}</h3>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5 tabular-nums">
-              {vocabPool.length} thẻ · Đã thuộc {masteredCount}/{vocabPool.length} · Gắn sao {starredCount}
-            </p>
-          </div>
+        <div className="space-y-1">
+          <h3 className="text-lg font-bold text-slate-900 leading-snug">{scopeTitle}</h3>
+          <p className="text-xs sm:text-sm text-slate-500 tabular-nums">
+            {vocabPool.length} thẻ · Đã thuộc {masteredCount}/{vocabPool.length} · Gắn sao {starredCount}
+          </p>
+        </div>
 
-          <div className="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-lg w-full md:w-auto">
-            <button
-              type="button"
-              onClick={() => setSection('cards')}
-              className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap ${
-                section === 'cards'
-                  ? 'bg-white text-blue-600 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setSection('cards')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-colors cursor-pointer ${
+              section === 'cards'
+                ? 'bg-blue-50 border-blue-600 text-blue-950'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <div
+              className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                section === 'cards' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
               }`}
             >
-              Học theo thẻ
-            </button>
-            <button
-              type="button"
-              onClick={() => setSection('test')}
-              className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap ${
-                section === 'test'
-                  ? 'bg-white text-blue-600 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+              <Layers className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-bold leading-tight">Học theo thẻ</div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                Flashcards, Learn, Match, Write
+              </div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setSection('test')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-colors cursor-pointer ${
+              section === 'test'
+                ? 'bg-blue-50 border-blue-600 text-blue-950'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <div
+              className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                section === 'test' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
               }`}
             >
-              Kiểm tra (Quiz)
-            </button>
-          </div>
+              <ClipboardCheck className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-bold leading-tight">Kiểm tra (Quiz)</div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                Trắc nghiệm từ vựng 4 đáp án nghĩa
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Sub-toolbar when in "Học theo thẻ" */}

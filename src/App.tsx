@@ -5,6 +5,7 @@ import {
   Loader2,
   LogIn,
   LogOut,
+  RefreshCw,
   UploadCloud,
 } from 'lucide-react';
 import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
@@ -117,6 +118,7 @@ export default function App() {
   const [syncState, setSyncState] = useState<SyncState>('local');
   const [authMessage, setAuthMessage] = useState<string>('');
   const [authBusy, setAuthBusy] = useState<boolean>(false);
+  const [syncRetryNonce, setSyncRetryNonce] = useState<number>(0);
 
   const customCoursesRef = useRef(customCourses);
   customCoursesRef.current = customCourses;
@@ -252,8 +254,19 @@ export default function App() {
       } catch (err) {
         if (cancelled) return;
         console.error('Cloud sync init error:', err);
+        let detail = '';
+        if (err instanceof Error) {
+          try {
+            const parsed = JSON.parse(err.message);
+            if (parsed?.error) detail = ` (${parsed.error})`;
+          } catch {
+            detail = err.message ? ` (${err.message})` : '';
+          }
+        }
         setSyncState('error');
-        setAuthMessage('Không thể kết nối Cloud Database. Dữ liệu vẫn được lưu trên trình duyệt.');
+        setAuthMessage(
+          `Không thể kết nối Cloud Database${detail}. Dữ liệu vẫn được lưu trên trình duyệt.`
+        );
       }
     });
 
@@ -263,7 +276,7 @@ export default function App() {
       if (unsubCourses) unsubCourses();
       if (unsubProgress) unsubProgress();
     };
-  }, []);
+  }, [syncRetryNonce]);
 
   // Debounced cloud progress save when user modifies progress for the active course
   useEffect(() => {
@@ -625,15 +638,27 @@ export default function App() {
                 )}
               </div>
 
-              <button
-                type="button"
-                disabled={authBusy}
-                onClick={handleSignOut}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 cursor-pointer disabled:opacity-60"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                Đăng xuất
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {syncState === 'error' && (
+                  <button
+                    type="button"
+                    onClick={() => setSyncRetryNonce((n) => n + 1)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    Thử kết nối lại
+                  </button>
+                )}
+                <button
+                  type="button"
+                  disabled={authBusy}
+                  onClick={handleSignOut}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-medium text-slate-700 cursor-pointer disabled:opacity-60"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Đăng xuất
+                </button>
+              </div>
             </>
           ) : (
             <>
